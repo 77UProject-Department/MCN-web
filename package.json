@@ -1,0 +1,11 @@
+{
+  "name": "qijiu-media-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "柒玖视界直播传媒公司官网模板",
+  "scripts": {
+    "dev": "node scripts/serve.cjs",
+    "build": "node scripts/generate-routes.cjs",
+    "check": "node --check dist/content.js && node --check dist/app.js && node scripts/check-site.cjs"
+  }
+}
