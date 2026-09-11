@@ -1,53 +1,273 @@
 const S = window.SITE;
-const $ = s => document.querySelector(s);
-const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const route = location.pathname.replace(/\/+$/, '') || '/';
-const brand = () => `<a class="brand" href="/" aria-label="${esc(S.brand.name)}首页"><span class="brand-mark">79</span><span><span class="brand-name">${esc(S.brand.short)}</span><span class="brand-sub" style="display:block">${esc(S.brand.english)}</span></span></a>`;
-const navLink = (href, label, active) => `<a class="nav-link ${active?'active':''}" href="${href}" ${active?'aria-current="page"':''}>${label}</a>`;
-const businessLinks = [...S.businesses.map(b=>[b.id,b.title]),['artist-center','艺人中心'],['cultural-tourism','柒玖文旅']];
-function header(){ $('#header').innerHTML=`<div class="header-inner">${brand()}<button class="menu-toggle" aria-label="打开导航菜单" aria-expanded="false" aria-controls="navigation">☰</button><nav id="navigation" class="navigation" aria-label="主导航"><div class="nav-item">${navLink('/','首页',route==='/')}</div><div class="nav-item"><button class="nav-link ${businessLinks.some(([id])=>route==='/'+id)?'active':''}" data-menu aria-expanded="false">公司业务<span class="chevron">⌄</span></button><div class="dropdown">${businessLinks.map(([id,name])=>`<a href="/${id}/">${name}</a>`).join('')}</div></div><div class="nav-item">${navLink('/about/','关于柒玖',route==='/about')}</div><div class="nav-item">${navLink('/charm/','社会责任',route==='/charm')}</div><div class="nav-item">${navLink('/institute/','柒玖研究院',route==='/institute')}</div><div class="nav-item">${navLink('/careers/','加入我们',route==='/careers')}</div><span class="language">语言: <b>中文</b></span></nav></div>`; }
-const sectionTitle=(name,en='')=>`<div class="section-title">${en?`<span class="en">${en}</span>`:''}<h2>${name}</h2></div>`;
-const pill=(href,text='了解更多',outline=false)=>`<a class="pill ${outline?'outline':''}" href="${href}">${text}<span aria-hidden="true">›</span></a>`;
-const img=(src,alt,cls='',extra='')=>src?`<img src="${esc(src)}" alt="${esc(alt)}" class="${cls}" ${extra}>`:'';
-function footer(){const c=S.contact;$('#footer').innerHTML=`<div class="footer-shell"><div class="container"><div class="footer-grid"><div><h3>公司地址</h3><p>${esc(S.brand.name)}</p><p>${esc(c.address||'办公地址即将公布')}</p>${pill('/contact/','联系我们',true)}</div><div><h3>联系我们</h3><div class="footer-contact"><a href="/careers/">主播招募 <span class="muted">· 了解合作方向</span></a><a href="/contact/">商务合作 <span class="muted">· 官方合作渠道</span></a><a href="/contact/">人才招聘 <span class="muted">· 与我们同行</span></a><a href="/complain/">意见反馈 <span class="muted">· 沟通与建议</span></a></div></div><div><h3>关注我们</h3><div class="social-list"><a class="social-item" href="/contact/"><span class="social-icon">♪</span>官方抖音</a><a class="social-item" href="/contact/"><span class="social-icon">◉</span>官方微信</a><a class="social-item" href="/contact/"><span class="social-icon">▷</span>视频号</a><a class="social-item" href="/contact/"><span class="social-icon">◎</span>小红书</a></div></div></div><p class="copyright">© ${new Date().getFullYear()} ${esc(S.brand.name)} ${c.icp?` · ${esc(c.icp)}`:''}<a href="/complain/">意见反馈</a> · 官网模板预览，图片与部分内容为示例</p></div></div>`;}
-function orbit(){return `<section class="orbit-section"><div class="container"><div class="orbit"><span class="orbit-ring"></span><span class="orbit-ring"></span><span class="orbit-ring"></span><h2>专注内容与创作者成长</h2><span class="orbit-node one">人的<br>IP</span><span class="orbit-node two">内容<br>IP</span><span class="orbit-node three">品牌<br>IP</span><span class="orbit-label a"><b>娱乐直播</b>让热爱发光</span><span class="orbit-label b"><b>短视频</b>让表达被看见</span><span class="orbit-label c"><b>内容电商</b>连接品牌与用户</span></div></div></section>`;}
-function introduction(){return `<div class="container"><div class="intro-card"><h2>${esc(S.brand.name)}</h2><p>${esc(S.intro[0])}</p><p>${esc(S.intro[1])}</p><div id="intro-extra" class="intro-extra" hidden><p>${esc(S.intro[2])}</p></div><button class="intro-more" aria-expanded="false" aria-controls="intro-extra">更多 ⌄</button></div><div class="center intro-action">${pill('/about/','了解柒玖')}</div></div>`;}
-function businessRows(){return `<section class="businesses"><div class="container">${S.businesses.map((b,i)=>`<article class="business-row ${i%2?'reverse':''}"><div class="business-card"><h2><span class="business-icon" aria-hidden="true">${b.icon}</span>${b.title}</h2><p>${esc(b.description)}</p>${pill('/'+b.id+'/')}</div><div class="business-media" data-carousel="${i}">${img(b.image,b.title+'示例画面','','loading="lazy"')}<span class="sample-label">示例场景</span><div class="carousel-controls"><button class="circle-button" data-slide="-1" aria-label="${b.title}上一张">‹</button><span class="carousel-count">01 / 02</span><button class="circle-button" data-slide="1" aria-label="${b.title}下一张">›</button></div></div></article>`).join('')}</div></section>`;}
-function newsCard(n,i){return `<a class="news-card" href="/news/${n.id}/"><div class="news-cover">${img(S.businesses[i%3].image,n.title,'','loading="lazy"')}<span class="news-category">${esc(n.category)}</span></div><div class="news-body"><h3>${esc(n.title)}</h3><p>${esc(n.summary)}</p><time>${esc(n.date)}</time></div></a>`;}
-function newsSection(){return `<section class="section"><div class="container">${sectionTitle('柒玖新闻','LATEST NEWS')}<div class="news-grid">${S.news.slice(0,3).map(newsCard).join('')}</div><div class="center news-action">${pill('/news/','更多新闻')}</div></div></section>`;}
-function locationSection(){return `<section class="section" id="locations"><div class="container">${sectionTitle('我们在这里','FIND US')}<div class="location-grid"><div class="map-visual">${img('/assets/map.png','中国区域示意图，不表示已设立分支机构','','loading="lazy"')}</div><div class="location-copy"><h3>${esc(S.brand.name)}</h3><p>从一次真诚的交流开始，<br>一起发现内容与合作的更多可能。</p><dl><dt>公司地址</dt><dd>${esc(S.contact.address||'办公地址即将公布')}</dd><dt>合作咨询</dt><dd>${esc(S.contact.phone||'官方联系方式正在完善')}</dd></dl>${pill('/contact/','联系柒玖')}</div></div></div></section>`;}
-function home(){document.body.classList.add('home-mode');return `<section class="hero">${img(S.hero.image,'柒玖视界虚构创作者群像示例海报','hero-image','fetchpriority="high"')}<div class="hero-title"><h1 aria-label="${esc(S.brand.name)}">${esc(S.hero.label)}</h1><p>${esc(S.hero.subtitle)}</p></div><a class="scroll-cue" href="#introduction"><span aria-hidden="true">⌄</span>向下滑动</a><a class="float-contact" href="/careers/">加入柒玖 · 一起发光 ↗</a><span class="sample-label">创作者形象为示例</span></section><div id="introduction">${orbit()}${introduction()}</div>${businessRows()}${newsSection()}${locationSection()}`;}
-function banner(title,sub,en='QIJIU MEDIA'){return `<section class="page-banner"><div class="container banner-content"><div class="banner-label">${esc(en)}</div><h1>${esc(title)}</h1>${sub?`<p>${esc(sub)}</p>`:''}</div><span class="banner-art" aria-hidden="true">79</span></section>`;}
-function subnav(items){return `<nav class="subnav" aria-label="页面目录">${items.map(([id,name])=>`<a href="#${id}">${name}</a>`).join('')}</nav>`;}
-function features(titles,copy=[]){return `<div class="grid-4">${titles.map((t,i)=>`<article class="feature-card"><span class="number">0${i+1}</span><h3>${esc(t)}</h3><p>${esc(copy[i]||'以清晰的目标与专业的协作，让每一步成长更有方向。')}</p></article>`).join('')}</div>`;}
-function faq(){return `<section class="section" id="faq"><div class="container">${sectionTitle('Q&A','COMMON QUESTIONS')}<div class="faq-list">${S.faq.map((f,i)=>`<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join('')}</div></div></section>`;}
-function creators(filter='全部'){return S.creators.filter(c=>filter==='全部'||c.category===filter).map(c=>`<article class="creator-card"><div class="creator-photo">${img(c.image||S.hero.image,c.name+'虚构形象示例','','loading="lazy" style="object-position:'+esc(c.position)+'"')}</div><h3>${esc(c.name)}</h3><p>${esc(c.category)} · 示例形象</p></article>`).join('');}
-function creatorSection(){return `<section class="section" id="creators"><div class="container">${sectionTitle('创作者矩阵','OUR CREATORS')}<div class="filters" aria-label="创作者分类">${['全部','音乐','舞蹈','生活','时尚'].map((f,i)=>`<button class="filter ${i===0?'active':''}" data-creator-filter="${f}" aria-pressed="${i===0}">${f}</button>`).join('')}</div><div class="creator-grid" id="creator-grid">${creators()}</div><p class="sample-note center">人物为虚构示例形象，正式艺人名单与作品将后续更新。</p></div></section>`;}
-function businessPage(b){return `${banner(b.headline,b.sub,b.en)}${subnav([['overview','业务介绍'],['creators','创作者矩阵'],['services','业务与服务'],['faq','常见问题']])}<section class="section" id="overview"><div class="container">${sectionTitle(b.id==='live'?'主播与内容':'内容与创作者',b.en)}<div class="creator-feature">${img(b.id==='live'?S.businesses[1].image:b.image,b.title+'示例场景','','loading="lazy"')}<div class="creator-info"><h2><span class="business-icon" style="display:inline-block;margin-right:12px">${b.icon}</span>${esc(b.title)}</h2><p>${esc(b.description)}</p><div>${b.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div><p class="sample-note">图片为示例场景</p></div></div></div></section>${b.id==='short-video'?`<section class="section" id="operations"><div class="container">${sectionTitle('柒玖内容运营','CONTENT OPERATIONS')}<div class="process">${['潜力识别','IP 定位','内容打磨','价值释放'].map((x,i)=>`<article class="feature-card"><span class="number">0${i+1}</span><h3>${x}</h3><p>${['发掘个人特长，找到真实的表达动机。','明确内容方向，建立鲜明的个人风格。','从选题、脚本到拍摄剪辑，持续提升作品。','以长期运营探索内容与商业的连接。'][i]}</p></article>`).join('')}</div></div></section>`:''}${creatorSection()}<section class="section" id="services"><div class="container">${sectionTitle(b.id==='shop'?'内容电商服务':'成长支持','OUR SERVICES')}${features(b.features,['了解创作与合作需求，沟通适合的方向。','明确内容目标，制定可执行的计划。','围绕内容场景，协调所需的制作资源。','关注内容反馈，逐步完善表达与协作。'])}</div></section><section class="section"><div class="container"><div class="split">${img(S.businesses[1].image,'直播与内容创作空间示例','','loading="lazy"')}<div><span class="tag">${b.id==='shop'?'品牌合作':'创作者成长'}</span><h2>${b.id==='shop'?'把品牌故事，讲给懂它的人':'从这里，开启你的内容旅程'}</h2><p>${b.id==='shop'?'围绕品牌需求与用户场景，探索选品、内容策划、直播执行与复盘的协作方式。':'每一种天赋，都需要被认真对待。从内容定位到日常创作，找到自己的节奏，持续打磨值得被看见的作品。'}</p>${pill(b.id==='shop'?'/contact/':'/careers/',b.id==='shop'?'了解商务合作':'了解招募方向')}<p class="sample-note">图片为示例场景</p></div></div></div></section>${faq()}${newsSection()}${b.id==='live'?locationSection():''}`;}
-function about(){return `${banner('人的 IP · 内容 IP · 品牌 IP','以专业陪伴成长，以内容连接世界','ABOUT QIJIU')}${subnav([['company','公司介绍'],['values','价值理念'],['news-anchor','新闻动态'],['faq','常见问题']])}<section class="section" id="company"><div class="container">${sectionTitle('关于柒玖','ABOUT US')}<div class="grid-3">${S.businesses.map(b=>`<article class="feature-card center"><span class="business-icon" style="display:inline-block;margin-bottom:20px">${b.icon}</span><h3>${b.title}</h3><p>${b.sub}</p><div style="margin-top:20px">${pill('/'+b.id+'/','了解业务',true)}</div></article>`).join('')}</div></div></section>${introduction()}<section class="section" id="values"><div class="container">${sectionTitle('相信热爱，也相信专业','OUR VALUES')}${features(['真诚表达','长期成长','开放协作','内容价值'],['尊重每一个独特的个体，鼓励真实、有温度的表达。','以持续学习与稳定创作，积累属于自己的能力。','在理解与信任中合作，让灵感找到落地的路径。','关注内容对观众的意义，用好作品建立长久连接。'])}</div></section><section class="section"><div class="container"><div class="statement"><h2>让每一份热爱，都被看见</h2><p>${esc(S.brand.description)}</p></div></div></section><div id="news-anchor">${newsSection()}</div>${faq()}${locationSection()}`;}
-function artistPage(){return `${banner('每一种独特 都有自己的舞台','发现多元表达，共创内容价值','ARTIST CENTER')}<section class="section"><div class="container">${sectionTitle('艺人中心','TALENT & CONTENT')}<div class="statement"><p>围绕创作者的个人特质与内容方向，探索经纪、商务、宣传及内容合作。让鲜明的表达得到专业支持，让每一次合作拥有清晰的目标。</p></div></div></section>${creatorSection()}<section class="section"><div class="container">${sectionTitle('业务板块','BUSINESS AREAS')}${features(['艺人经纪','艺人商务','宣传营销','内容共创'],['沟通个人发展方向，梳理适合的内容与合作机会。','围绕艺人特质与品牌需求，共同打磨合作内容。','结合内容特点与受众，策划自然、有辨识度的传播。','探索音乐、短视频和线下活动等多种表达形式。'])}</div></section><section class="section"><div class="container"><div class="split">${img(S.businesses[1].image,'内容共创场景示例','','loading="lazy"')}<div><h2>内容 IP</h2><p>从一个人物，到一个故事，再到一系列值得期待的作品。尊重创意，也重视从灵感到落地的每一个环节。</p>${pill('/contact/','洽谈合作')}</div></div></div></section>`;}
-function tourismPage(){return `${banner('以内容 发现一座城','连接在地文化与新的表达','CULTURE & TOURISM')}<section class="section"><div class="container">${sectionTitle('柒玖文旅','CULTURAL EXPRESSION')}<div class="statement"><p>以创作者的视角发现城市，以镜头记录在地生活。文旅板块用于展示城市内容、文化传播与活动策划等合作方向，具体业务与案例将逐步完善。</p></div></div></section><section class="section"><div class="container">${sectionTitle('业务板块','OUR FOCUS')}<div class="grid-3">${['城市内容创作','文化主题策划','在地活动共创'].map((x,i)=>`<article class="feature-card"><span class="number">0${i+1}</span><h3>${x}</h3><p>${['记录风景与生活，发掘值得被讲述的城市故事。','连接文化主题与当代表达，探索有温度的内容。','围绕节庆与地方特色，构思线上线下的互动体验。'][i]}</p></article>`).join('')}</div></div></section><section class="section"><div class="container"><div class="statement"><h2>读懂一城，再讲好它的故事</h2><p>真实案例将在完成合作并取得相关授权后展示。</p><div style="margin-top:30px">${pill('/contact/','了解合作')}</div></div></div></section>`;}
-function responsibility(){return `${banner('让内容的影响力 向善而行','真诚表达，积极行动','SOCIAL RESPONSIBILITY')}<section class="section"><div class="container">${sectionTitle('我们的责任理念','POSITIVE IMPACT')}${features(['真实内容','文明互动','尊重创作','积极表达'],['注重内容的真实性，传递清晰、准确的信息。','尊重不同声音，营造友善的交流氛围。','尊重原创作品与创作者，重视授权与规范合作。','关注生活中的美好，让优质内容产生积极影响。'])}</div></section><section class="section"><div class="container"><div class="statement"><h2>以微小的行动，积累长久的价值</h2><p>公益、文化与社区活动记录将在开展后持续更新。我们希望每一次表达，都能为生活带来更多善意。</p></div></div></section><section class="section"><div class="container">${sectionTitle('内容共建方向','TOGETHER FOR GOOD')}<div class="grid-3">${['公益内容','文化记录','社区连接'].map((x,i)=>`<article class="feature-card"><span class="number">0${i+1}</span><h3>${x}</h3><p>${['关注身边真实的人和事，传播有温度的故事。','用镜头记录地方生活，分享传统文化的当代表达。','倾听社区的声音，探索创作者可以参与的行动。'][i]}</p></article>`).join('')}</div></div></section>`;}
-function institute(){return `${banner('柒玖研究院 洞见内容未来','让观察成为思考，让经验形成方法','QIJIU INSIGHTS')}<section class="section"><div class="container">${sectionTitle('研究院介绍','OBSERVE · LEARN · SHARE')}<div class="statement"><p>这里是柒玖视界的内容观察与学习交流板块，用于整理直播实践、创作方法和行业观察。以持续学习支持创作者成长，把经验转化为可交流的知识。</p><p class="sample-note" style="margin-top:20px">栏目模板，正式课程、活动与研究内容将逐步更新。</p></div></div></section><section class="section"><div class="container">${sectionTitle('关注方向','OUR PERSPECTIVE')}${features(['内容观察','创作方法','运营实践','品牌沟通'],['观察内容形式与受众表达，发现新的创作视角。','整理从选题到成片的实践过程，分享创作思路。','关注直播与账号运营中的实际问题与方法。','讨论品牌信息如何与真实生活场景建立连接。'])}</div></section><section class="section"><div class="container">${sectionTitle('柒玖观止','THOUGHTS & STORIES')}<div class="news-grid">${S.news.slice(0,3).map(newsCard).join('')}</div></div></section><section class="section"><div class="container"><div class="statement"><h2>持续学习，是另一种创造力</h2><p>欢迎围绕内容创作、直播实践与文化传播进行交流。</p><div style="margin-top:30px">${pill('/contact/','联系交流')}</div></div></div></section>`;}
-function careers(){return `${banner('和有热爱的人 一起发光','加入柒玖，发现更广阔的自己','JOIN QIJIU')}<section class="section"><div class="container">${sectionTitle('加入我们','MAKE SOMETHING THAT MATTERS')}<div class="wide-note">以下为招聘栏目示例，具体开放岗位、工作地点与合作条件，以正式招募信息为准。</div><div class="filters" aria-label="招募类型">${['全部','创作者招募','团队招聘'].map((t,i)=>`<button class="filter ${i===0?'active':''}" data-job-filter="${t}" aria-pressed="${i===0}">${t}</button>`).join('')}</div><div class="jobs" id="jobs">${jobs()}</div></div></section><section class="section"><div class="container">${sectionTitle('相遇，从彼此了解开始','YOUR NEXT STEP')}<div class="process">${['准备个人介绍','分享相关作品','沟通合作方向','明确合作方式'].map((x,i)=>`<article class="feature-card"><span class="number">0${i+1}</span><h3>${x}</h3></article>`).join('')}</div></div></section>${faq()}`;}
-function jobs(type='全部'){return S.jobs.filter(j=>type==='全部'||(type==='创作者招募'?j.type==='创作者招募':j.type!=='创作者招募')).map(j=>`<details class="job"><summary><span class="tag">${esc(j.type)}</span><h3>${esc(j.name)}</h3><p>${esc(j.description)}</p></summary><ul>${j.duties.map(d=>`<li>${esc(d)}</li>`).join('')}</ul>${pill('/contact/','了解联系方式',true)}</details>`).join('');}
-function newsPage(){return `${banner('柒玖新闻 记录每一步成长','在这里，看见我们的内容与思考','NEWS & STORIES')}<section class="section"><div class="container"><div class="filters" aria-label="新闻分类">${['全部','内容观察','直播课堂','品牌合作'].map((x,i)=>`<button class="filter ${i===0?'active':''}" data-news-filter="${x}" aria-pressed="${i===0}">${x}</button>`).join('')}</div><div class="news-grid" id="news-grid">${S.news.map(newsCard).join('')}</div></div></section>`;}
-function newsArticle(n){return `<article class="article"><a class="muted" href="/news/">← 返回新闻列表</a><h1>${esc(n.title)}</h1><div class="article-meta">${esc(n.category)} · ${esc(n.date)}</div>${img(S.businesses[1].image,n.title+'配图，示例场景','article-cover')}${n.paragraphs.map(p=>`<p>${esc(p)}</p>`).join('')}<div style="margin-top:40px">${pill('/news/','更多内容',true)}</div></article>`;}
-function contact(){const c=S.contact;return `${banner('期待与你 开启新的可能','创作者合作 · 品牌合作 · 人才招聘','CONTACT QIJIU')}<section class="section"><div class="container">${sectionTitle('联系我们','LET’S CONNECT')}<div class="contact-methods"><article><span class="tag">商务 / 招聘</span><h3>电话联系</h3><p class="contact-value">${esc(c.phone||'即将公布')}</p>${c.phone?pill('tel:'+encodeURIComponent(c.phone),'拨打电话'):'<p class="sample-note">官方电话正在完善</p>'}</article><article><span class="tag">合作咨询</span><h3>官方微信</h3><p class="contact-value">${esc(c.wechat||'即将公布')}</p>${c.wechat?`<button class="pill" data-copy="${esc(c.wechat)}">复制微信号</button>`:'<p class="sample-note">微信号发布后将在此展示</p>'}${c.wechatQr?img(c.wechatQr,'官方微信二维码','qrcode'):''}</article><article><span class="tag">资料 / 作品</span><h3>联系邮箱</h3><p class="contact-value">${esc(c.email||'即将公布')}</p>${c.email?pill('mailto:'+encodeURIComponent(c.email),'发送邮件'):'<p class="sample-note">官方邮箱正在完善</p>'}</article></div></div></section>${locationSection()}<section class="section"><div class="container"><div class="statement"><h2>关注柒玖的更多动态</h2><p>${c.douyin?'欢迎通过官方账号了解更多内容。':'抖音、微信、视频号与小红书官方账号将后续公布。'}</p>${c.douyin?`<div style="margin-top:25px">${pill(esc(c.douyin),'访问官方抖音')}</div>`:''}</div></div></section>`;}
-function feedback(){return `${banner('认真倾听 每一份反馈','沟通，让我们不断完善','FEEDBACK')}<section class="section"><div class="container"><div class="statement"><h2>意见与建议</h2><p>如需反馈网站内容、合作沟通或其他问题，请通过官方联系方式与我们联系。建议说明问题发生的时间、相关页面与具体情况，便于进一步了解。</p><div style="margin-top:30px">${pill('/contact/','查看官方联系方式')}</div><p class="sample-note" style="margin-top:24px">当前模板未接入在线工单或投诉收集服务。</p></div></div></section>`;}
-const routes={'/':home,'/about':about,'/artist-center':artistPage,'/cultural-tourism':tourismPage,'/charm':responsibility,'/institute':institute,'/careers':careers,'/news':newsPage,'/contact':contact,'/complain':feedback};
-S.businesses.forEach(b=>routes['/'+b.id]=()=>businessPage(b));S.news.forEach(n=>routes['/news/'+n.id]=()=>newsArticle(n));
-header();footer();$('#main').innerHTML=routes[route]?routes[route]():`<section class="not-found"><h1>404</h1><h2>这个页面暂时没有找到</h2>${pill('/','返回首页')}</section>`;
-const title=$('main h1')?.textContent;document.title=route==='/'?S.brand.name:`${title||'页面未找到'} - ${S.brand.name}`;
-$('.menu-toggle').addEventListener('click',e=>{const open=document.body.classList.toggle('menu-open');e.currentTarget.setAttribute('aria-expanded',String(open));e.currentTarget.setAttribute('aria-label',open?'关闭导航菜单':'打开导航菜单');e.currentTarget.textContent=open?'×':'☰';});
-document.querySelectorAll('[data-menu]').forEach(b=>b.addEventListener('click',()=>{const open=b.parentElement.classList.toggle('open');b.setAttribute('aria-expanded',String(open));}));
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.body.classList.remove('menu-open');$('.menu-toggle').setAttribute('aria-expanded','false');$('.menu-toggle').textContent='☰';document.querySelectorAll('.nav-item.open').forEach(n=>{n.classList.remove('open');n.querySelector('button')?.setAttribute('aria-expanded','false')});}});
-$('.intro-more')?.addEventListener('click',e=>{const extra=$('#intro-extra');extra.hidden=!extra.hidden;e.currentTarget.setAttribute('aria-expanded',String(!extra.hidden));e.currentTarget.textContent=extra.hidden?'更多 ⌄':'收起 ⌃';});
-$('.back-top').addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));window.addEventListener('scroll',()=>$('.back-top').hidden=window.scrollY<550,{passive:true});
-document.querySelectorAll('[data-creator-filter]').forEach(b=>b.addEventListener('click',()=>{setFilter(b,'[data-creator-filter]');$('#creator-grid').innerHTML=creators(b.dataset.creatorFilter)}));
-document.querySelectorAll('[data-news-filter]').forEach(b=>b.addEventListener('click',()=>{setFilter(b,'[data-news-filter]');$('#news-grid').innerHTML=S.news.filter(n=>b.dataset.newsFilter==='全部'||n.category===b.dataset.newsFilter).map(newsCard).join('')||'<p class="empty-state">暂无内容</p>';}));
-document.querySelectorAll('[data-job-filter]').forEach(b=>b.addEventListener('click',()=>{setFilter(b,'[data-job-filter]');$('#jobs').innerHTML=jobs(b.dataset.jobFilter);}));
-function setFilter(current,selector){document.querySelectorAll(selector).forEach(b=>{b.classList.toggle('active',b===current);b.setAttribute('aria-pressed',String(b===current))});}
-document.querySelectorAll('[data-carousel]').forEach(el=>{let index=0;const start=S.businesses[Number(el.dataset.carousel)].image;const pictures=[start,start===S.hero.image?S.businesses[1].image:S.hero.image];el.querySelectorAll('[data-slide]').forEach(b=>b.addEventListener('click',()=>{index=(index+Number(b.dataset.slide)+pictures.length)%pictures.length;const picture=el.querySelector('img');if(picture)picture.src=pictures[index];el.querySelector('.carousel-count').textContent=`0${index+1} / 0${pictures.length}`;}));});
-let toastTimer;function toast(text){clearTimeout(toastTimer);$('#toast').textContent=text;$('#toast').classList.add('show');toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),3000);}
-document.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);toast('已复制微信号');}catch{toast('复制暂不可用，请手动复制上方微信号');}}));
+const $ = (s) => document.querySelector(s);
+const esc = (value) =>
+  String(value ?? "").replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        c
+      ],
+  );
+const route = location.pathname.replace(/\/+$/, "") || "/";
+const brand = () =>
+  `<a class="brand" href="/" aria-label="${esc(S.brand.name)}首页"><span class="brand-mark">79</span><span><span class="brand-name">${esc(S.brand.short)}</span><span class="brand-sub" style="display:block">${esc(S.brand.english)}</span></span></a>`;
+const navLink = (href, label, active) =>
+  `<a class="nav-link ${active ? "active" : ""}" href="${href}" ${active ? 'aria-current="page"' : ""}>${label}</a>`;
+const businessLinks = [
+  ...S.businesses.map((b) => [b.id, b.title]),
+  ["artist-center", "艺人中心"],
+  ["cultural-tourism", "柒玖文旅"],
+];
+function header() {
+  $("#header").innerHTML =
+    `<div class="header-inner">${brand()}<button class="menu-toggle" aria-label="打开导航菜单" aria-expanded="false" aria-controls="navigation">☰</button><nav id="navigation" class="navigation" aria-label="主导航"><div class="nav-item">${navLink("/", "首页", route === "/")}</div><div class="nav-item"><button class="nav-link ${businessLinks.some(([id]) => route === "/" + id) ? "active" : ""}" data-menu aria-expanded="false">公司业务<span class="chevron">⌄</span></button><div class="dropdown">${businessLinks.map(([id, name]) => `<a href="/${id}/">${name}</a>`).join("")}</div></div><div class="nav-item">${navLink("/about/", "关于柒玖", route === "/about")}</div><div class="nav-item">${navLink("/charm/", "社会责任", route === "/charm")}</div><div class="nav-item">${navLink("/institute/", "柒玖研究院", route === "/institute")}</div><div class="nav-item">${navLink("/careers/", "加入我们", route === "/careers")}</div><span class="language">语言: <b>中文</b></span></nav></div>`;
+}
+const sectionTitle = (name, en = "") =>
+  `<div class="section-title">${en ? `<span class="en">${en}</span>` : ""}<h2>${name}</h2></div>`;
+const pill = (href, text = "了解更多", outline = false) =>
+  `<a class="pill ${outline ? "outline" : ""}" href="${href}">${text}<span aria-hidden="true">›</span></a>`;
+const img = (src, alt, cls = "", extra = "") =>
+  src
+    ? `<img src="${esc(src)}" alt="${esc(alt)}" class="${cls}" ${extra}>`
+    : "";
+function footer() {
+  const c = S.contact;
+  $("#footer").innerHTML =
+    `<div class="footer-shell"><div class="container"><div class="footer-grid"><div><h3>公司地址</h3><p>${esc(S.brand.name)}</p><p>${esc(c.address || "办公地址即将公布")}</p>${pill("/contact/", "联系我们", true)}</div><div><h3>联系我们</h3><div class="footer-contact"><a href="/careers/">主播招募 <span class="muted">· 了解合作方向</span></a><a href="/contact/">商务合作 <span class="muted">· 官方合作渠道</span></a><a href="/contact/">人才招聘 <span class="muted">· 与我们同行</span></a><a href="/complain/">意见反馈 <span class="muted">· 沟通与建议</span></a></div></div><div><h3>关注我们</h3><div class="social-list"><a class="social-item" href="/contact/"><span class="social-icon">♪</span>官方抖音</a><a class="social-item" href="/contact/"><span class="social-icon">◉</span>官方微信</a><a class="social-item" href="/contact/"><span class="social-icon">▷</span>视频号</a><a class="social-item" href="/contact/"><span class="social-icon">◎</span>小红书</a></div></div></div><p class="copyright">© ${new Date().getFullYear()} ${esc(S.brand.name)} ${c.icp ? ` · ${esc(c.icp)}` : ""}<a href="/complain/">意见反馈</a> · 官网模板预览，图片与部分内容为示例</p></div></div>`;
+}
+function orbit() {
+  return `<section class="orbit-section"><div class="container"><div class="orbit"><span class="orbit-ring"></span><span class="orbit-ring"></span><span class="orbit-ring"></span><h2>专注内容与创作者成长</h2><span class="orbit-node one">人的<br>IP</span><span class="orbit-node two">内容<br>IP</span><span class="orbit-node three">品牌<br>IP</span><span class="orbit-label a"><b>娱乐直播</b>让热爱发光</span><span class="orbit-label b"><b>短视频</b>让表达被看见</span><span class="orbit-label c"><b>内容电商</b>连接品牌与用户</span></div></div></section>`;
+}
+function introduction() {
+  return `<div class="container"><div class="intro-card"><h2>${esc(S.brand.name)}</h2><p>${esc(S.intro[0])}</p><p>${esc(S.intro[1])}</p><div id="intro-extra" class="intro-extra" hidden><p>${esc(S.intro[2])}</p></div><button class="intro-more" aria-expanded="false" aria-controls="intro-extra">更多 ⌄</button></div><div class="center intro-action">${pill("/about/", "了解柒玖")}</div></div>`;
+}
+function businessRows() {
+  return `<section class="businesses"><div class="container">${S.businesses.map((b, i) => `<article class="business-row ${i % 2 ? "reverse" : ""}"><div class="business-card"><h2><span class="business-icon" aria-hidden="true">${b.icon}</span>${b.title}</h2><p>${esc(b.description)}</p>${pill("/" + b.id + "/")}</div><div class="business-media" data-carousel="${i}">${img(b.image, b.title + "示例画面", "", 'loading="lazy"')}<span class="sample-label">示例场景</span><div class="carousel-controls"><button class="circle-button" data-slide="-1" aria-label="${b.title}上一张">‹</button><span class="carousel-count">01 / 02</span><button class="circle-button" data-slide="1" aria-label="${b.title}下一张">›</button></div></div></article>`).join("")}</div></section>`;
+}
+function newsCard(n, i) {
+  return `<a class="news-card" href="/news/${n.id}/"><div class="news-cover">${img(S.businesses[i % 3].image, n.title, "", 'loading="lazy"')}<span class="news-category">${esc(n.category)}</span></div><div class="news-body"><h3>${esc(n.title)}</h3><p>${esc(n.summary)}</p><time>${esc(n.date)}</time></div></a>`;
+}
+function newsSection() {
+  return `<section class="section"><div class="container">${sectionTitle("柒玖新闻", "LATEST NEWS")}<div class="news-grid">${S.news.slice(0, 3).map(newsCard).join("")}</div><div class="center news-action">${pill("/news/", "更多新闻")}</div></div></section>`;
+}
+function locationSection() {
+  return `<section class="section" id="locations"><div class="container">${sectionTitle("我们在这里", "FIND US")}<div class="location-grid"><div class="map-visual">${img("/assets/map.png", "中国区域示意图，不表示已设立分支机构", "", 'loading="lazy"')}</div><div class="location-copy"><h3>${esc(S.brand.name)}</h3><p>从一次真诚的交流开始，<br>一起发现内容与合作的更多可能。</p><dl><dt>公司地址</dt><dd>${esc(S.contact.address || "办公地址即将公布")}</dd><dt>合作咨询</dt><dd>${esc(S.contact.phone || "官方联系方式正在完善")}</dd></dl>${pill("/contact/", "联系柒玖")}</div></div></div></section>`;
+}
+function home() {
+  document.body.classList.add("home-mode");
+  return `<section class="hero">${img(S.hero.image, "柒玖视界虚构创作者群像示例海报", "hero-image", 'fetchpriority="high"')}<div class="hero-title"><h1 aria-label="${esc(S.brand.name)}">${esc(S.hero.label)}</h1><p>${esc(S.hero.subtitle)}</p></div><a class="scroll-cue" href="#introduction"><span aria-hidden="true">⌄</span>向下滑动</a><a class="float-contact" href="/careers/">加入柒玖 · 一起发光 ↗</a><span class="sample-label">创作者形象为示例</span></section><div id="introduction">${orbit()}${introduction()}</div>${businessRows()}${newsSection()}${locationSection()}`;
+}
+function banner(title, sub, en = "QIJIU MEDIA") {
+  return `<section class="page-banner"><div class="container banner-content"><div class="banner-label">${esc(en)}</div><h1>${esc(title)}</h1>${sub ? `<p>${esc(sub)}</p>` : ""}</div><span class="banner-art" aria-hidden="true">79</span></section>`;
+}
+function subnav(items) {
+  return `<nav class="subnav" aria-label="页面目录">${items.map(([id, name]) => `<a href="#${id}">${name}</a>`).join("")}</nav>`;
+}
+function features(titles, copy = []) {
+  return `<div class="grid-4">${titles.map((t, i) => `<article class="feature-card"><span class="number">0${i + 1}</span><h3>${esc(t)}</h3><p>${esc(copy[i] || "以清晰的目标与专业的协作，让每一步成长更有方向。")}</p></article>`).join("")}</div>`;
+}
+function faq() {
+  return `<section class="section" id="faq"><div class="container">${sectionTitle("Q&A", "COMMON QUESTIONS")}<div class="faq-list">${S.faq.map((f, i) => `<details><summary>${esc(f.q)}</summary><p>${esc(f.a)}</p></details>`).join("")}</div></div></section>`;
+}
+function creators(filter = "全部") {
+  return S.creators
+    .filter((c) => filter === "全部" || c.category === filter)
+    .map(
+      (c) =>
+        `<article class="creator-card"><div class="creator-photo">${img(c.image || S.hero.image, c.name + "虚构形象示例", "", 'loading="lazy" style="object-position:' + esc(c.position) + '"')}</div><h3>${esc(c.name)}</h3><p>${esc(c.category)} · 示例形象</p></article>`,
+    )
+    .join("");
+}
+function creatorSection() {
+  return `<section class="section" id="creators"><div class="container">${sectionTitle("创作者矩阵", "OUR CREATORS")}<div class="filters" aria-label="创作者分类">${["全部", "音乐", "舞蹈", "生活", "时尚"].map((f, i) => `<button class="filter ${i === 0 ? "active" : ""}" data-creator-filter="${f}" aria-pressed="${i === 0}">${f}</button>`).join("")}</div><div class="creator-grid" id="creator-grid">${creators()}</div><p class="sample-note center">人物为虚构示例形象，正式艺人名单与作品将后续更新。</p></div></section>`;
+}
+function businessPage(b) {
+  return `${banner(b.headline, b.sub, b.en)}${subnav([
+    ["overview", "业务介绍"],
+    ["creators", "创作者矩阵"],
+    ["services", "业务与服务"],
+    ["faq", "常见问题"],
+  ])}<section class="section" id="overview"><div class="container">${sectionTitle(b.id === "live" ? "主播与内容" : "内容与创作者", b.en)}<div class="creator-feature">${img(b.id === "live" ? S.businesses[1].image : b.image, b.title + "示例场景", "", 'loading="lazy"')}<div class="creator-info"><h2><span class="business-icon" style="display:inline-block;margin-right:12px">${b.icon}</span>${esc(b.title)}</h2><p>${esc(b.description)}</p><div>${b.tags.map((t) => `<span class="tag">${esc(t)}</span>`).join("")}</div><p class="sample-note">图片为示例场景</p></div></div></div></section>${b.id === "short-video" ? `<section class="section" id="operations"><div class="container">${sectionTitle("柒玖内容运营", "CONTENT OPERATIONS")}<div class="process">${["潜力识别", "IP 定位", "内容打磨", "价值释放"].map((x, i) => `<article class="feature-card"><span class="number">0${i + 1}</span><h3>${x}</h3><p>${["发掘个人特长，找到真实的表达动机。", "明确内容方向，建立鲜明的个人风格。", "从选题、脚本到拍摄剪辑，持续提升作品。", "以长期运营探索内容与商业的连接。"][i]}</p></article>`).join("")}</div></div></section>` : ""}${creatorSection()}<section class="section" id="services"><div class="container">${sectionTitle(b.id === "shop" ? "内容电商服务" : "成长支持", "OUR SERVICES")}${features(b.features, ["了解创作与合作需求，沟通适合的方向。", "明确内容目标，制定可执行的计划。", "围绕内容场景，协调所需的制作资源。", "关注内容反馈，逐步完善表达与协作。"])}</div></section><section class="section"><div class="container"><div class="split">${img(S.businesses[1].image, "直播与内容创作空间示例", "", 'loading="lazy"')}<div><span class="tag">${b.id === "shop" ? "品牌合作" : "创作者成长"}</span><h2>${b.id === "shop" ? "把品牌故事，讲给懂它的人" : "从这里，开启你的内容旅程"}</h2><p>${b.id === "shop" ? "围绕品牌需求与用户场景，探索选品、内容策划、直播执行与复盘的协作方式。" : "每一种天赋，都需要被认真对待。从内容定位到日常创作，找到自己的节奏，持续打磨值得被看见的作品。"}</p>${pill(b.id === "shop" ? "/contact/" : "/careers/", b.id === "shop" ? "了解商务合作" : "了解招募方向")}<p class="sample-note">图片为示例场景</p></div></div></div></section>${faq()}${newsSection()}${b.id === "live" ? locationSection() : ""}`;
+}
+function about() {
+  return `${banner("人的 IP · 内容 IP · 品牌 IP", "以专业陪伴成长，以内容连接世界", "ABOUT QIJIU")}${subnav(
+    [
+      ["company", "公司介绍"],
+      ["values", "价值理念"],
+      ["news-anchor", "新闻动态"],
+      ["faq", "常见问题"],
+    ],
+  )}<section class="section" id="company"><div class="container">${sectionTitle("关于柒玖", "ABOUT US")}<div class="grid-3">${S.businesses.map((b) => `<article class="feature-card center"><span class="business-icon" style="display:inline-block;margin-bottom:20px">${b.icon}</span><h3>${b.title}</h3><p>${b.sub}</p><div style="margin-top:20px">${pill("/" + b.id + "/", "了解业务", true)}</div></article>`).join("")}</div></div></section>${introduction()}<section class="section" id="values"><div class="container">${sectionTitle("相信热爱，也相信专业", "OUR VALUES")}${features(["真诚表达", "长期成长", "开放协作", "内容价值"], ["尊重每一个独特的个体，鼓励真实、有温度的表达。", "以持续学习与稳定创作，积累属于自己的能力。", "在理解与信任中合作，让灵感找到落地的路径。", "关注内容对观众的意义，用好作品建立长久连接。"])}</div></section><section class="section"><div class="container"><div class="statement"><h2>让每一份热爱，都被看见</h2><p>${esc(S.brand.description)}</p></div></div></section><div id="news-anchor">${newsSection()}</div>${faq()}${locationSection()}`;
+}
+function artistPage() {
+  return `${banner("每一种独特 都有自己的舞台", "发现多元表达，共创内容价值", "ARTIST CENTER")}<section class="section"><div class="container">${sectionTitle("艺人中心", "TALENT & CONTENT")}<div class="statement"><p>围绕创作者的个人特质与内容方向，探索经纪、商务、宣传及内容合作。让鲜明的表达得到专业支持，让每一次合作拥有清晰的目标。</p></div></div></section>${creatorSection()}<section class="section"><div class="container">${sectionTitle("业务板块", "BUSINESS AREAS")}${features(["艺人经纪", "艺人商务", "宣传营销", "内容共创"], ["沟通个人发展方向，梳理适合的内容与合作机会。", "围绕艺人特质与品牌需求，共同打磨合作内容。", "结合内容特点与受众，策划自然、有辨识度的传播。", "探索音乐、短视频和线下活动等多种表达形式。"])}</div></section><section class="section"><div class="container"><div class="split">${img(S.businesses[1].image, "内容共创场景示例", "", 'loading="lazy"')}<div><h2>内容 IP</h2><p>从一个人物，到一个故事，再到一系列值得期待的作品。尊重创意，也重视从灵感到落地的每一个环节。</p>${pill("/contact/", "洽谈合作")}</div></div></div></section>`;
+}
+function tourismPage() {
+  return `${banner("以内容 发现一座城", "连接在地文化与新的表达", "CULTURE & TOURISM")}<section class="section"><div class="container">${sectionTitle("柒玖文旅", "CULTURAL EXPRESSION")}<div class="statement"><p>以创作者的视角发现城市，以镜头记录在地生活。文旅板块用于展示城市内容、文化传播与活动策划等合作方向，具体业务与案例将逐步完善。</p></div></div></section><section class="section"><div class="container">${sectionTitle("业务板块", "OUR FOCUS")}<div class="grid-3">${["城市内容创作", "文化主题策划", "在地活动共创"].map((x, i) => `<article class="feature-card"><span class="number">0${i + 1}</span><h3>${x}</h3><p>${["记录风景与生活，发掘值得被讲述的城市故事。", "连接文化主题与当代表达，探索有温度的内容。", "围绕节庆与地方特色，构思线上线下的互动体验。"][i]}</p></article>`).join("")}</div></div></section><section class="section"><div class="container"><div class="statement"><h2>读懂一城，再讲好它的故事</h2><p>真实案例将在完成合作并取得相关授权后展示。</p><div style="margin-top:30px">${pill("/contact/", "了解合作")}</div></div></div></section>`;
+}
+function responsibility() {
+  return `${banner("让内容的影响力 向善而行", "真诚表达，积极行动", "SOCIAL RESPONSIBILITY")}<section class="section"><div class="container">${sectionTitle("我们的责任理念", "POSITIVE IMPACT")}${features(["真实内容", "文明互动", "尊重创作", "积极表达"], ["注重内容的真实性，传递清晰、准确的信息。", "尊重不同声音，营造友善的交流氛围。", "尊重原创作品与创作者，重视授权与规范合作。", "关注生活中的美好，让优质内容产生积极影响。"])}</div></section><section class="section"><div class="container"><div class="statement"><h2>以微小的行动，积累长久的价值</h2><p>公益、文化与社区活动记录将在开展后持续更新。我们希望每一次表达，都能为生活带来更多善意。</p></div></div></section><section class="section"><div class="container">${sectionTitle("内容共建方向", "TOGETHER FOR GOOD")}<div class="grid-3">${["公益内容", "文化记录", "社区连接"].map((x, i) => `<article class="feature-card"><span class="number">0${i + 1}</span><h3>${x}</h3><p>${["关注身边真实的人和事，传播有温度的故事。", "用镜头记录地方生活，分享传统文化的当代表达。", "倾听社区的声音，探索创作者可以参与的行动。"][i]}</p></article>`).join("")}</div></div></section>`;
+}
+function institute() {
+  return `${banner("柒玖研究院 洞见内容未来", "让观察成为思考，让经验形成方法", "QIJIU INSIGHTS")}<section class="section"><div class="container">${sectionTitle("研究院介绍", "OBSERVE · LEARN · SHARE")}<div class="statement"><p>这里是柒玖视界的内容观察与学习交流板块，用于整理直播实践、创作方法和行业观察。以持续学习支持创作者成长，把经验转化为可交流的知识。</p><p class="sample-note" style="margin-top:20px">栏目模板，正式课程、活动与研究内容将逐步更新。</p></div></div></section><section class="section"><div class="container">${sectionTitle("关注方向", "OUR PERSPECTIVE")}${features(["内容观察", "创作方法", "运营实践", "品牌沟通"], ["观察内容形式与受众表达，发现新的创作视角。", "整理从选题到成片的实践过程，分享创作思路。", "关注直播与账号运营中的实际问题与方法。", "讨论品牌信息如何与真实生活场景建立连接。"])}</div></section><section class="section"><div class="container">${sectionTitle("柒玖观止", "THOUGHTS & STORIES")}<div class="news-grid">${S.news.slice(0, 3).map(newsCard).join("")}</div></div></section><section class="section"><div class="container"><div class="statement"><h2>持续学习，是另一种创造力</h2><p>欢迎围绕内容创作、直播实践与文化传播进行交流。</p><div style="margin-top:30px">${pill("/contact/", "联系交流")}</div></div></div></section>`;
+}
+function careers() {
+  return `${banner("和有热爱的人 一起发光", "加入柒玖，发现更广阔的自己", "JOIN QIJIU")}<section class="section"><div class="container">${sectionTitle("加入我们", "MAKE SOMETHING THAT MATTERS")}<div class="wide-note">以下为招聘栏目示例，具体开放岗位、工作地点与合作条件，以正式招募信息为准。</div><div class="filters" aria-label="招募类型">${["全部", "创作者招募", "团队招聘"].map((t, i) => `<button class="filter ${i === 0 ? "active" : ""}" data-job-filter="${t}" aria-pressed="${i === 0}">${t}</button>`).join("")}</div><div class="jobs" id="jobs">${jobs()}</div></div></section><section class="section"><div class="container">${sectionTitle("相遇，从彼此了解开始", "YOUR NEXT STEP")}<div class="process">${["准备个人介绍", "分享相关作品", "沟通合作方向", "明确合作方式"].map((x, i) => `<article class="feature-card"><span class="number">0${i + 1}</span><h3>${x}</h3></article>`).join("")}</div></div></section>${faq()}`;
+}
+function jobs(type = "全部") {
+  return S.jobs
+    .filter(
+      (j) =>
+        type === "全部" ||
+        (type === "创作者招募"
+          ? j.type === "创作者招募"
+          : j.type !== "创作者招募"),
+    )
+    .map(
+      (j) =>
+        `<details class="job"><summary><span class="tag">${esc(j.type)}</span><h3>${esc(j.name)}</h3><p>${esc(j.description)}</p></summary><ul>${j.duties.map((d) => `<li>${esc(d)}</li>`).join("")}</ul>${pill("/contact/", "了解联系方式", true)}</details>`,
+    )
+    .join("");
+}
+function newsPage() {
+  return `${banner("柒玖新闻 记录每一步成长", "在这里，看见我们的内容与思考", "NEWS & STORIES")}<section class="section"><div class="container"><div class="filters" aria-label="新闻分类">${["全部", "内容观察", "直播课堂", "品牌合作"].map((x, i) => `<button class="filter ${i === 0 ? "active" : ""}" data-news-filter="${x}" aria-pressed="${i === 0}">${x}</button>`).join("")}</div><div class="news-grid" id="news-grid">${S.news.map(newsCard).join("")}</div></div></section>`;
+}
+function newsArticle(n) {
+  return `<article class="article"><a class="muted" href="/news/">← 返回新闻列表</a><h1>${esc(n.title)}</h1><div class="article-meta">${esc(n.category)} · ${esc(n.date)}</div>${img(S.businesses[1].image, n.title + "配图，示例场景", "article-cover")}${n.paragraphs.map((p) => `<p>${esc(p)}</p>`).join("")}<div style="margin-top:40px">${pill("/news/", "更多内容", true)}</div></article>`;
+}
+function contact() {
+  const c = S.contact;
+  return `${banner("期待与你 开启新的可能", "创作者合作 · 品牌合作 · 人才招聘", "CONTACT QIJIU")}<section class="section"><div class="container">${sectionTitle("联系我们", "LET’S CONNECT")}<div class="contact-methods"><article><span class="tag">商务 / 招聘</span><h3>电话联系</h3><p class="contact-value">${esc(c.phone || "即将公布")}</p>${c.phone ? pill("tel:" + encodeURIComponent(c.phone), "拨打电话") : '<p class="sample-note">官方电话正在完善</p>'}</article><article><span class="tag">合作咨询</span><h3>官方微信</h3><p class="contact-value">${esc(c.wechat || "即将公布")}</p>${c.wechat ? `<button class="pill" data-copy="${esc(c.wechat)}">复制微信号</button>` : '<p class="sample-note">微信号发布后将在此展示</p>'}${c.wechatQr ? img(c.wechatQr, "官方微信二维码", "qrcode") : ""}</article><article><span class="tag">资料 / 作品</span><h3>联系邮箱</h3><p class="contact-value">${esc(c.email || "即将公布")}</p>${c.email ? pill("mailto:" + encodeURIComponent(c.email), "发送邮件") : '<p class="sample-note">官方邮箱正在完善</p>'}</article></div></div></section>${locationSection()}<section class="section"><div class="container"><div class="statement"><h2>关注柒玖的更多动态</h2><p>${c.douyin ? "欢迎通过官方账号了解更多内容。" : "抖音、微信、视频号与小红书官方账号将后续公布。"}</p>${c.douyin ? `<div style="margin-top:25px">${pill(esc(c.douyin), "访问官方抖音")}</div>` : ""}</div></div></section>`;
+}
+function feedback() {
+  return `${banner("认真倾听 每一份反馈", "沟通，让我们不断完善", "FEEDBACK")}<section class="section"><div class="container"><div class="statement"><h2>意见与建议</h2><p>如需反馈网站内容、合作沟通或其他问题，请通过官方联系方式与我们联系。建议说明问题发生的时间、相关页面与具体情况，便于进一步了解。</p><div style="margin-top:30px">${pill("/contact/", "查看官方联系方式")}</div><p class="sample-note" style="margin-top:24px">当前模板未接入在线工单或投诉收集服务。</p></div></div></section>`;
+}
+const routes = {
+  "/": home,
+  "/about": about,
+  "/artist-center": artistPage,
+  "/cultural-tourism": tourismPage,
+  "/charm": responsibility,
+  "/institute": institute,
+  "/careers": careers,
+  "/news": newsPage,
+  "/contact": contact,
+  "/complain": feedback,
+};
+S.businesses.forEach((b) => (routes["/" + b.id] = () => businessPage(b)));
+S.news.forEach((n) => (routes["/news/" + n.id] = () => newsArticle(n)));
+header();
+footer();
+$("#main").innerHTML = routes[route]
+  ? routes[route]()
+  : `<section class="not-found"><h1>404</h1><h2>这个页面暂时没有找到</h2>${pill("/", "返回首页")}</section>`;
+const title = $("main h1")?.textContent;
+document.title =
+  route === "/" ? S.brand.name : `${title || "页面未找到"} - ${S.brand.name}`;
+$(".menu-toggle").addEventListener("click", (e) => {
+  const open = document.body.classList.toggle("menu-open");
+  e.currentTarget.setAttribute("aria-expanded", String(open));
+  e.currentTarget.setAttribute(
+    "aria-label",
+    open ? "关闭导航菜单" : "打开导航菜单",
+  );
+  e.currentTarget.textContent = open ? "×" : "☰";
+});
+document.querySelectorAll("[data-menu]").forEach((b) =>
+  b.addEventListener("click", () => {
+    const open = b.parentElement.classList.toggle("open");
+    b.setAttribute("aria-expanded", String(open));
+  }),
+);
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    document.body.classList.remove("menu-open");
+    $(".menu-toggle").setAttribute("aria-expanded", "false");
+    $(".menu-toggle").textContent = "☰";
+    document.querySelectorAll(".nav-item.open").forEach((n) => {
+      n.classList.remove("open");
+      n.querySelector("button")?.setAttribute("aria-expanded", "false");
+    });
+  }
+});
+$(".intro-more")?.addEventListener("click", (e) => {
+  const extra = $("#intro-extra");
+  extra.hidden = !extra.hidden;
+  e.currentTarget.setAttribute("aria-expanded", String(!extra.hidden));
+  e.currentTarget.textContent = extra.hidden ? "更多 ⌄" : "收起 ⌃";
+});
+$(".back-top").addEventListener("click", () =>
+  window.scrollTo({ top: 0, behavior: "smooth" }),
+);
+window.addEventListener(
+  "scroll",
+  () => ($(".back-top").hidden = window.scrollY < 550),
+  { passive: true },
+);
+document.querySelectorAll("[data-creator-filter]").forEach((b) =>
+  b.addEventListener("click", () => {
+    setFilter(b, "[data-creator-filter]");
+    $("#creator-grid").innerHTML = creators(b.dataset.creatorFilter);
+  }),
+);
+document.querySelectorAll("[data-news-filter]").forEach((b) =>
+  b.addEventListener("click", () => {
+    setFilter(b, "[data-news-filter]");
+    $("#news-grid").innerHTML =
+      S.news
+        .filter(
+          (n) =>
+            b.dataset.newsFilter === "全部" ||
+            n.category === b.dataset.newsFilter,
+        )
+        .map(newsCard)
+        .join("") || '<p class="empty-state">暂无内容</p>';
+  }),
+);
+document.querySelectorAll("[data-job-filter]").forEach((b) =>
+  b.addEventListener("click", () => {
+    setFilter(b, "[data-job-filter]");
+    $("#jobs").innerHTML = jobs(b.dataset.jobFilter);
+  }),
+);
+function setFilter(current, selector) {
+  document.querySelectorAll(selector).forEach((b) => {
+    b.classList.toggle("active", b === current);
+    b.setAttribute("aria-pressed", String(b === current));
+  });
+}
+document.querySelectorAll("[data-carousel]").forEach((el) => {
+  let index = 0;
+  const start = S.businesses[Number(el.dataset.carousel)].image;
+  const pictures = [
+    start,
+    start === S.hero.image ? S.businesses[1].image : S.hero.image,
+  ];
+  el.querySelectorAll("[data-slide]").forEach((b) =>
+    b.addEventListener("click", () => {
+      index =
+        (index + Number(b.dataset.slide) + pictures.length) % pictures.length;
+      const picture = el.querySelector("img");
+      if (picture) picture.src = pictures[index];
+      el.querySelector(".carousel-count").textContent =
+        `0${index + 1} / 0${pictures.length}`;
+    }),
+  );
+});
+let toastTimer;
+function toast(text) {
+  clearTimeout(toastTimer);
+  $("#toast").textContent = text;
+  $("#toast").classList.add("show");
+  toastTimer = setTimeout(() => $("#toast").classList.remove("show"), 3000);
+}
+document.querySelectorAll("[data-copy]").forEach((b) =>
+  b.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(b.dataset.copy);
+      toast("已复制微信号");
+    } catch {
+      toast("复制暂不可用，请手动复制上方微信号");
+    }
+  }),
+);
