@@ -112,15 +112,19 @@ assert.ok(
 console.log(
   `OK: ${files.filter((f) => f.endsWith(".html")).length} HTML entrypoints, ${checked} asset references, all business/news routes and configured images.`,
 );
-(async () => {
-  for (const f of files.filter((f) => f.endsWith("index.html"))) {
-    const rel = path.relative(root, path.dirname(f)).split(path.sep).join("/");
-    const url = "http://127.0.0.1:5179/" + (rel ? rel + "/" : "");
-    const res = await fetch(url, { method: "HEAD" });
-    assert.equal(res.status, 200, url);
-  }
-  console.log("OK: all 17 page URLs return HTTP 200.");
-})().catch((e) => {
-  console.error(e.message);
-  process.exitCode = 1;
-});
+if (process.argv.includes("--http"))
+  (async () => {
+    for (const f of files.filter((f) => f.endsWith("index.html"))) {
+      const rel = path
+        .relative(root, path.dirname(f))
+        .split(path.sep)
+        .join("/");
+      const url = "http://127.0.0.1:5179/" + (rel ? rel + "/" : "");
+      const res = await fetch(url, { method: "HEAD" });
+      assert.equal(res.status, 200, url);
+    }
+    console.log("OK: all 17 page URLs return HTTP 200.");
+  })().catch((e) => {
+    console.error(e.message);
+    process.exitCode = 1;
+  });

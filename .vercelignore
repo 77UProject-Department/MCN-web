@@ -1,8 +1,7 @@
+research/
 node_modules/
 .sites-runtime/
-.vercel/
-research/
-*.tar.gz
+.openai/
 .env
 .env.*
-!.env.example
+*.tar.gz
