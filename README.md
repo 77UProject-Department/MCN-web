@@ -25,6 +25,10 @@
 
 配置依据：[Vercel 官方配置文档](https://vercel.com/docs/project-configuration/vercel-json)。
 
+## 部署到宝塔面板
+
+宝塔部署请查看 [宝塔部署说明](deployment/baota/宝塔部署说明.md)。使用宝塔静态部署包时，将包内文件直接解压到网站根目录即可；无需运行 Node.js。可选的 Nginx 配置位于 `deployment/baota/nginx-location.conf`。
+
 ## 最常修改的位置
 
 | 要修改的内容 | 文件与位置 |
